@@ -1,0 +1,146 @@
+:root {
+    --bg-color: #2b3036; /* 工場の鉄骨のようなグレー */
+    --bg-panel: #1e2226;
+    --text-color: #e2e8f0;
+    --text-dim: #94a3b8;
+    --accent-main: #f59e0b; /* 重機のようなオレンジ/イエロー */
+    --accent-light: #fcd34d;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --magic-color: #3b82f6; /* アルゴリズムブルー */
+    --font-pixel: 'DotGothic16', sans-serif;
+    --border-dungeon: 3px solid var(--accent-main);
+    --shadow-dungeon: 0 4px 0 #0f1115;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: var(--font-pixel); background-color: var(--bg-color); color: var(--text-color);
+    user-select: none; -webkit-user-select: none; overflow-x: hidden;
+    background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px);
+    transition: background-color 0.5s;
+}
+
+#game-container { position: relative; width: 100vw; height: 100vh; max-width: 600px; margin: 0 auto; background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%); overflow: hidden; display: flex; flex-direction: column; }
+
+/* プレス機エフェクト（画面の上下がガシャンと閉まる） */
+.press-effect {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 999; pointer-events: none; opacity: 0;
+    background: 
+        linear-gradient(to bottom, #111 0%, #111 50%, transparent 50%),
+        linear-gradient(to top, #111 0%, #111 50%, transparent 50%);
+    background-size: 100% 200%;
+    background-position: center top, center bottom;
+    background-repeat: no-repeat;
+}
+.press-effect.press-anim { animation: pressSlam 0.4s ease-in; }
+@keyframes pressSlam {
+    0% { opacity: 1; background-position: center -100%, center 200%; }
+    50% { opacity: 1; background-position: center 0%, center 100%; }
+    100% { opacity: 0; background-position: center -10%, center 110%; }
+}
+
+/* SCREEN SHAKE */
+.shake-screen { animation: screenShake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes screenShake {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    10%, 90% { transform: translate3d(0, -10px, 0); }
+    20%, 80% { transform: translate3d(0, 10px, 0); }
+    30%, 50%, 70% { transform: translate3d(0, -15px, 0); }
+    40%, 60% { transform: translate3d(0, 15px, 0); }
+}
+
+.screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 10; padding: 20px; overflow-y: auto; }
+.screen.active { display: flex; }
+
+#screen-title { justify-content: center; align-items: center; text-align: center; }
+.pixel-border { padding: 4px; background: repeating-linear-gradient(45deg, #000, #000 10px, var(--accent-main) 10px, var(--accent-main) 20px); margin-bottom: 20px; border-radius: 8px; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+#title-img { width: 160px; height: 160px; object-fit: cover; display: block; image-rendering: pixelated; border-radius: 4px; border: 4px solid var(--bg-panel); }
+
+.dungeon-title { font-size: 2.5rem; color: #fff; text-shadow: 3px 3px 0 var(--accent-main); margin-bottom: 5px; }
+#screen-title h2 { font-size: 1.5rem; color: var(--accent-main); margin-bottom: 15px; text-shadow: 2px 2px 0 #000; }
+.subtitle { color: var(--text-dim); margin-bottom: 30px; font-size: 1.1rem; }
+
+.dungeon-btn {
+    font-family: var(--font-pixel); font-size: 1.2rem; padding: 15px 30px;
+    border: var(--border-dungeon); border-radius: 4px; background: var(--bg-panel);
+    color: var(--text-color); cursor: pointer; transition: transform 0.1s;
+    box-shadow: var(--shadow-dungeon); text-shadow: 1px 1px 0 #000;
+}
+.dungeon-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+.dungeon-btn:hover { border-color: var(--accent-light); color: var(--accent-light); }
+
+.game-header { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-panel); border: var(--border-dungeon); border-radius: 4px; margin-bottom: 15px; flex-shrink: 0; }
+.hp-bar { font-size: 1.6rem; letter-spacing: 2px; color: #ff3333; text-shadow: 2px 2px 0 #000; transition: all 0.3s; }
+.header-right { display: flex; align-items: center; gap: 15px; }
+.stage-info { font-size: 1.1rem; color: var(--accent-main); }
+.timer-box { font-size: 1.6rem; color: var(--text-color); text-shadow: 2px 2px 0 #000; width: 45px; text-align: center; }
+.timer-danger { color: var(--danger-color); animation: blink 0.5s infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+.instruction-box { background: rgba(245, 158, 11, 0.1); border: 2px solid var(--accent-main); border-radius: 4px; padding: 10px; font-size: 1rem; margin-bottom: 15px; line-height: 1.4; color: var(--accent-light); flex-shrink: 0; }
+
+.stage-panel { display: none; flex-direction: column; flex: 1; overflow-y: auto; min-height: 0; }
+.stage-panel.active { display: flex; }
+
+.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
+.counter-text { font-size: 1rem; color: var(--text-dim); }
+
+/* HINT BUTTON */
+.hint-btn { font-size: 0.9rem; padding: 8px 15px; border-color: var(--magic-color); color: var(--magic-color); box-shadow: 0 2px 0 #000; }
+.hint-btn:hover { background: var(--magic-color); color: #000; }
+.hint-btn:disabled, .hint-btn.used { border-color: #555; color: #555; background: #222; cursor: not-allowed; box-shadow: none; transform: none; text-shadow: none; }
+
+.gate-card { background: var(--bg-panel); color: var(--text-color); padding: 15px; margin-bottom: 15px; border: var(--border-dungeon); border-radius: 4px; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); flex-shrink: 0; font-size: 1.2rem; line-height: 1.5; }
+
+/* 視覚ヒント（プレス機UI） */
+.visual-hint-box { text-align: center; margin-bottom: 15px; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 4px; display: flex; justify-content: center; align-items: center; gap: 10px;}
+.data-block { background: var(--magic-color); padding: 10px; border-radius: 4px; font-weight: bold; color: #fff; transition: all 0.3s;}
+.arrow { color: var(--accent-main); font-size: 1.5rem; font-weight: bold;}
+.compressed-block { background: var(--success-color); padding: 5px; border-radius: 4px; font-weight: bold; color: #fff; font-size: 0.8rem;}
+
+.quiz-options { display: flex; flex-direction: column; gap: 8px; padding: 5px 0; flex-shrink: 0; }
+.quiz-opt { font-family: var(--font-pixel); font-size: 1.1rem; padding: 12px; border: var(--border-dungeon); border-radius: 4px; background: var(--bg-panel); color: var(--text-color); cursor: pointer; text-align: left; transition: transform 0.1s; box-shadow: var(--shadow-dungeon); }
+.quiz-opt:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+.quiz-opt.correct { border-color: var(--success-color); color: var(--success-color); background: rgba(16, 185, 129, 0.1); }
+.quiz-opt.wrong { border-color: var(--danger-color); color: var(--danger-color); background: rgba(239, 68, 68, 0.1); }
+.quiz-opt.hidden-opt { opacity: 0.2; pointer-events: none; background: #000; border-color: #333; text-decoration: line-through; }
+
+.feedback-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 85%; background: var(--bg-panel); border: var(--border-dungeon); border-radius: 4px; padding: 20px; text-align: center; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+.feedback-overlay.hidden { display: none; }
+.feedback-title { font-size: 1.8rem; margin-bottom: 15px; text-shadow: 2px 2px 0 #000; }
+.feedback-text { font-size: 1rem; line-height: 1.6; margin-bottom: 20px; text-align: left; background: #000; padding: 15px; border-radius: 4px; border: 1px solid #333; }
+
+/* GAMEOVER SCREEN */
+#screen-gameover { justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle, #4a1c1c, #000); }
+.gameover-title { font-size: 3.5rem; color: var(--danger-color); margin-bottom: 10px; text-shadow: 0 0 20px var(--danger-color); }
+.gameover-subtitle { color: #ccc; font-size: 1.2rem; margin-bottom: 40px; }
+
+/* CLEAR SCREEN */
+#screen-clear { justify-content: center; align-items: center; text-align: center; }
+#clear-img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid var(--accent-main); margin-bottom: 15px; image-rendering: pixelated; }
+.clear-title { font-size: 2.5rem; color: var(--success-color); text-shadow: 2px 2px 0 #000; margin-bottom: 5px; }
+.rank-display { font-size: 1.8rem; color: #fff; margin-bottom: 15px; text-shadow: 0 0 10px var(--accent-light); }
+.clear-subtitle { color: var(--text-color); margin-bottom: 20px; }
+.score-display { font-size: 1.5rem; color: var(--accent-light); margin-bottom: 20px; }
+.password-box { background: var(--bg-panel); border: var(--border-dungeon); border-radius: 4px; padding: 15px; width: 100%; margin-bottom: 20px; }
+.password-box p:first-child { font-size: 0.9rem; margin-bottom: 8px; color: var(--accent-light); }
+.password-text { font-size: 1.1rem; color: var(--success-color); }
+
+.review-section { width: 100%; margin-top: 10px; }
+.review-title { font-size: 1.2rem; color: var(--accent-light); border-bottom: 2px solid var(--border-dungeon); padding-bottom: 5px; margin-bottom: 10px; text-align: left; }
+.review-perfect { text-align: center; font-size: 1.1rem; color: var(--success-color); padding: 15px; border: var(--border-dungeon); border-color: var(--success-color); background: rgba(16, 185, 129, 0.1); border-radius: 4px; }
+.review-card { background: #000; border: 1px solid #333; border-radius: 4px; padding: 12px; margin-bottom: 10px; text-align: left; border-left: 4px solid var(--danger-color); }
+.review-stage { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px; }
+.review-q { font-size: 0.9rem; color: var(--text-color); margin-bottom: 6px; line-height: 1.4; }
+.review-a { font-size: 0.85rem; color: var(--success-color); margin-bottom: 6px; }
+.review-exp { font-size: 0.8rem; color: var(--text-dim); line-height: 1.4; }
+
+@media (max-height: 700px) {
+    .screen { padding: 15px; }
+    .dungeon-title { font-size: 2.2rem; }
+    .gate-card { padding: 10px; font-size: 1.1rem; }
+    .quiz-opt { padding: 10px; font-size: 1rem; }
+}

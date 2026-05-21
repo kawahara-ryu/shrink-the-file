@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>デジタル圧縮工場「ファイルサイズを削れ！」</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- 油圧プレスエフェクト用 -->
+        <div id="press-effect" class="press-effect hidden"></div>
+
+        <!-- TITLE SCREEN -->
+        <div id="screen-title" class="screen active">
+            <div class="pixel-border">
+                <img id="title-img" src="./compression_factory.png" alt="ボクバナナ工場長">
+            </div>
+            <h1 class="dungeon-title">COMPRESSION FACTORY</h1>
+            <h2>デジタル圧縮工場</h2>
+            <p class="subtitle">無駄なデータを削ぎ落とせ！</p>
+            <button class="dungeon-btn start-btn" onclick="startGame()">🏭 工場を稼働する</button>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="screen-game" class="screen">
+            <div class="game-header">
+                <div class="hp-bar" id="hp-bar">❤️❤️❤️</div>
+                <div class="header-right">
+                    <span class="stage-info" id="stage-title"></span>
+                    <span class="timer-box" id="timer">--</span>
+                </div>
+            </div>
+            <div id="instruction-box" class="instruction-box"></div>
+            
+            <div id="panel-main" class="stage-panel active">
+                <div class="panel-header">
+                    <div id="counter" class="counter-text"></div>
+                    <!-- お助け機能 -->
+                    <button id="hint-btn" class="dungeon-btn hint-btn" onclick="useHint()">💡 圧縮アルゴリズム起動 (Time -5s)</button>
+                </div>
+
+                <div class="gate-card" id="gate-card">
+                    <!-- 視覚ヒント：プレス機 UI -->
+                    <div id="visual-hint-box" class="visual-hint-box"></div>
+                    <div id="question-text"></div>
+                </div>
+                <div id="options" class="quiz-options"></div>
+            </div>
+
+            <div id="feedback-overlay" class="feedback-overlay hidden">
+                <div id="feedback-title" class="feedback-title"></div>
+                <p id="feedback-text" class="feedback-text"></p>
+                <button class="dungeon-btn" id="next-btn" onclick="closeFeedback()">次のラインへ ▶</button>
+            </div>
+        </div>
+
+        <!-- GAMEOVER SCREEN -->
+        <div id="screen-gameover" class="screen">
+            <h1 class="gameover-title">LINE STOPPED</h1>
+            <p class="gameover-subtitle" id="gameover-reason">データが詰まって工場が爆発した…</p>
+            <img src="./compression_factory.png" alt="Game Over" style="width:100px; filter: grayscale(100%); margin-bottom: 20px;">
+            <button class="dungeon-btn" onclick="startGame()">↻ 再稼働</button>
+        </div>
+
+        <!-- CLEAR SCREEN -->
+        <div id="screen-clear" class="screen">
+            <img id="clear-img" src="./compression_victory.png" alt="圧縮完了">
+            <h1 class="clear-title">ALL COMPRESSED!</h1>
+            <!-- 称号 -->
+            <h2 id="rank-display" class="rank-display"></h2>
+            <p class="clear-subtitle">すべてのデータを最小サイズに圧縮した！</p>
+            <div id="score-display" class="score-display"></div>
+            
+            <div class="password-box">
+                <p>🗝️ Google Classroomに「あいことば」を入力して報告しよう</p>
+                <p class="password-text" id="password-text"></p>
+            </div>
+
+            <div class="review-section">
+                <h3 class="review-title">📜 廃棄データログ（間違えた問題）</h3>
+                <div id="review-area"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
