@@ -144,3 +144,5 @@ body {
     .gate-card { padding: 10px; font-size: 1.1rem; }
     .quiz-opt { padding: 10px; font-size: 1rem; }
 }
+
+.keyword-text, .password-text { user-select: text !important; -webkit-user-select: text !important; }
